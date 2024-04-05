@@ -9,8 +9,6 @@ import eccezioni.EccezionePosizioneOccupata;
 import eccezioni.EccezionePosizioneVuota;
 import eccezioni.EccezioneRipianoNonValido;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import utilita.Menu;
 
 /**

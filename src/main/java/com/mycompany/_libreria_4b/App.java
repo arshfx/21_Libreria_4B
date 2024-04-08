@@ -4,13 +4,13 @@
 
 package com.mycompany._libreria_4b;
 
-import eccezioni.EccezionePosizioneNonValida;
-import eccezioni.EccezionePosizioneOccupata;
-import eccezioni.EccezionePosizioneVuota;
-import eccezioni.EccezioneRipianoNonValido;
+import eccezioni.*;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import utilita.ConsoleInput;
 import utilita.Menu;
+import utilita.TextFile;
 
 /**
  *
@@ -20,7 +20,7 @@ public class App {
 
     public static void main(String[] args) 
     {
-        int numeroVociMenu=7;
+        int numeroVociMenu=9;
         String[] vociMenu=new String[numeroVociMenu];
         int voceMenuScelta;
         Menu menu;
@@ -29,10 +29,10 @@ public class App {
         ConsoleInput tastiera=new ConsoleInput();
         String titolo,autore;
         int numeroPagine,ripiano, posizione;
-        int esito;
-        Libro lib = null;
+        Libro lib;
         Libro[] elencoLibriOrdinatiAlfabeticamente;
         String [] elencoTitoliAutore = null;
+        String nomeFileCSV="volumi.csv";
         
         vociMenu[0]="0 -->\tEsci";
         vociMenu[1]="1 -->\tVisualizza tutti i volumi dello scaffale";
@@ -41,6 +41,8 @@ public class App {
         vociMenu[4]="4 -->\tElimina volume (ripiano,posizione)";
         vociMenu[5]="5 -->\tMostra titoli di uno specifico autore";
         vociMenu[6]="6 -->\tMostra elenco dei volumi presenti ordinato alfabeticamente per titolo";
+        vociMenu[7]="7 -->\tEsporta volumi in formato CSV";
+        vociMenu[8]="8 -->\tImporta volumi da file CSV";
         
         menu=new Menu(vociMenu);
         
@@ -233,6 +235,52 @@ public class App {
                         System.out.println(elencoLibriOrdinatiAlfabeticamente[i].toString());
                     }
                     break;
+                    
+                case 7: 
+                    
+                    try{
+                        TextFile file=new TextFile(nomeFileCSV, 'W');
+                        String datiVolume="";
+                        for(int i=0; i<s1.getNumRipiani(); i++){
+                            for(int j=0; j<s1.getNumMaxLibri(i); j++){
+                                try {
+                                    lib=s1.getLibro(i, j);
+                                    datiVolume=i+";"+j+";"+lib.getTitolo()+";"+lib.getAutore()+";"+lib.getNumeroPagine();
+                                    file.toFile(datiVolume);
+                                } 
+                                catch (EccezioneRipianoNonValido | EccezionePosizioneNonValida e){
+                                    //non succederà mai
+                                } 
+                                catch (EccezionePosizioneVuota e){
+                                    //non fare nulla; vai al prossimo
+                                } 
+                                catch (FileException e) {
+                                    System.out.println(e.toString());
+                                }
+                            }
+                        }
+                        file.Close();
+                        System.out.println("Esportazione avvenuta correttamente");
+                    }
+                    catch(IOException e){
+                        System.out.println("ERRORE IOException::errore nell'apertura del file");
+                    }
+                    
+                    break;
+                    
+                case 8: 
+                    try{
+                        TextFile file=new TextFile(nomeFileCSV, 'R');
+                        do{
+                            
+                        }while(true);
+                    }
+                    catch(IOException e){
+                        
+                    }
+                    
+                    break;
+
                     
             }
         }while(voceMenuScelta!=0);

@@ -33,6 +33,7 @@ public class App {
         Libro[] elencoLibriOrdinatiAlfabeticamente;
         String [] elencoTitoliAutore = null;
         String nomeFileCSV="volumi.csv";
+        TextFile file = null;
         
         vociMenu[0]="0 -->\tEsci";
         vociMenu[1]="1 -->\tVisualizza tutti i volumi dello scaffale";
@@ -239,12 +240,12 @@ public class App {
                 case 7: 
                     
                     try{
-                        TextFile file=new TextFile(nomeFileCSV, 'W');
+                        file=new TextFile(nomeFileCSV, 'W');
                         String datiVolume="";
                         for(int i=0; i<s1.getNumRipiani(); i++){
                             for(int j=0; j<s1.getNumMaxLibri(i); j++){
                                 try {
-                                    lib=s1.getLibro(i, j);
+                                    lib=s1.getLibro(i, j);  
                                     datiVolume=i+";"+j+";"+lib.getTitolo()+";"+lib.getAutore()+";"+lib.getNumeroPagine();
                                     file.toFile(datiVolume);
                                 } 
@@ -269,17 +270,50 @@ public class App {
                     break;
                     
                 case 8: 
+                    String rigaLetta;
+                    String[] datiVolume;
                     try{
-                        TextFile file=new TextFile(nomeFileCSV, 'R');
+                        file=new TextFile(nomeFileCSV, 'R');
+                        
                         do{
-                            
+                            try{
+                                rigaLetta=file.fromFile();
+                                datiVolume=rigaLetta.split(";");
+                                ripiano=Integer.parseInt(datiVolume[0]);
+                                posizione=Integer.parseInt(datiVolume[1]);
+                                titolo=datiVolume[2];
+                                autore=datiVolume[3];
+                                numeroPagine=Integer.parseInt(datiVolume[4]);
+                                lib=new Libro(titolo, autore, numeroPagine);
+                                try{
+                                    s1.setLibro(lib, ripiano, posizione);
+                                }
+                                catch(EccezionePosizioneNonValida e){
+                                    System.out.println("ERRORE EccezionePosizioneNonValida::posizione " + posizione + " non valida" + " per il volume: "+titolo);
+                                }
+                                catch(EccezioneRipianoNonValido e){
+                                    System.out.println("ERRORE EccezioneRipianoNonValido::ripiano " + ripiano + " non valido per il volume: "+titolo);
+                                }
+                                catch(EccezionePosizioneOccupata e){
+                                    System.out.println("ERRORE EccezionePosizioneOccupata::nel ripiano " + ripiano + "posizione " + posizione + " già occupata. Il volume: "+titolo + " non sara posizionato");
+                                }
+                            }
+                            catch (FileException e){
+                                file.Close();
+                                System.out.println("fine operazione di caricamento");
+                                break;
+                            }
                         }while(true);
-                    }
-                    catch(IOException e){
                         
                     }
                     
+                    catch(IOException e){
+                        System.out.println("ERRORE IOException::impossibile aprire il file");
+                    } 
+                    
+                    
                     break;
+
 
                     
             }

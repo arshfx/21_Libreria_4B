@@ -5,7 +5,12 @@
 package com.mycompany._libreria_4b;
 
 import eccezioni.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utilita.ConsoleInput;
@@ -34,6 +39,7 @@ public class App {
         String [] elencoTitoliAutore = null;
         String nomeFileCSV="volumi.csv";
         TextFile file = null;
+        String nomeFileBinario = "scaffale.bin";
         
         vociMenu[0]="0 -->\tEsci";
         vociMenu[1]="1 -->\tVisualizza tutti i volumi dello scaffale";
@@ -312,6 +318,41 @@ public class App {
                     } 
                     
                     
+                    break;
+                    
+                    case 9: //serializzazione
+                    try {
+                
+                        ObjectOutputStream writer=new ObjectOutputStream(new FileOutputStream(nomeFileBinario));
+                        writer.writeObject(s1);
+                        writer.flush();
+                        writer.close();
+                        System.out.println("salvataggio avvenuto correttamente");
+                    } 
+                    catch (FileNotFoundException e){
+                        System.out.println("ERRORE FileNotFoundException::file non trovato");
+                    } 
+                    catch (IOException e){
+                        System.out.println("ERRORE IOException::impossibile accedere al file");
+                    }    
+
+                    break;
+                    
+                case 10: 
+                    try {
+                        ObjectInputStream reader=new ObjectInputStream(new FileInputStream(nomeFileBinario));
+                        s1=(Scaffale)reader.readObject();
+                        reader.close();
+                    } 
+                    catch (FileNotFoundException e){
+                        System.out.println("ERRORE FileNotFoundException::file non trovato");
+                    } 
+                    catch (IOException e){
+                        System.out.println("ERRORE IOException::impossibile accedere al file");
+                    } catch (ClassNotFoundException e) {  
+                        System.out.println("ERRORE ClassNotFoundException::Impossibile leggere il dato memorizzato");
+                    }
+                
                     break;
 
 
